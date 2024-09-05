@@ -1,18 +1,14 @@
 import express from "express";
-import User from "../models/User.js";
-import GenericController from "../controllers/GenericController.js";
+
+import UserController from "../controllers/UserController.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-const model = User;
-const controller = new GenericController(model);
-
 const path = "/users";
 
-router.get(path, controller.getAll);
-router.post(path, controller.create);
-router.get(path + "/:id", controller.getById);
-router.put(path + "/:id", controller.update);
-router.delete(path + "/:id", controller.delete);
+router.post(path + "/register", UserController.registerUser);
+router.post(path + "/login", UserController.authUser);
+router.get(path + "/profile", authMiddleware, UserController.getUserProfile);
 
 export default router;
