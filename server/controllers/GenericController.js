@@ -4,8 +4,8 @@ export default class GenericController {
   }
   getAll = async (req, res) => {
     try {
-      const auditLogs = await this.model.find();
-      res.status(200).json(auditLogs);
+      const data = await this.model.find();
+      res.status(200).json(data);
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Server error", error });
@@ -14,11 +14,11 @@ export default class GenericController {
 
   getById = async (req, res) => {
     try {
-      const auditLog = await this.model.findById(req.params.id);
-      if (!auditLog) {
-        return res.status(404).json({ message: "Audit log not found" });
+      const data = await this.model.findById(req.params.id);
+      if (!data) {
+        return res.status(404).json({ message: "Data not found" });
       }
-      res.status(200).json(auditLog);
+      res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ message: "Server error", error });
     }
@@ -26,9 +26,9 @@ export default class GenericController {
 
   create = async (req, res) => {
     try {
-      const newAuditLog = new this.model(req.body);
-      await newAuditLog.save();
-      res.status(201).json(newAuditLog);
+      const data = new this.model(req.body);
+      await data.save();
+      res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ message: "Server error", error });
     }
@@ -36,15 +36,15 @@ export default class GenericController {
 
   update = async (req, res) => {
     try {
-      const updatedAuditLog = await this.model.findByIdAndUpdate(
+      const data = await this.model.findByIdAndUpdate(
         req.params.id,
         req.body,
         { new: true }
       );
-      if (!updatedAuditLog) {
-        return res.status(404).json({ message: "Audit log not found" });
+      if (!data) {
+        return res.status(404).json({ message: "Data not found" });
       }
-      res.status(200).json(updatedAuditLog);
+      res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ message: "Server error", error });
     }
@@ -52,11 +52,11 @@ export default class GenericController {
 
   delete = async (req, res) => {
     try {
-      const deletedAuditLog = await this.model.findByIdAndDelete(req.params.id);
-      if (!deletedAuditLog) {
-        return res.status(404).json({ message: "Audit log not found" });
+      const data = await this.model.findByIdAndDelete(req.params.id);
+      if (!data) {
+        return res.status(404).json({ message: "Data not found" });
       }
-      res.status(200).json({ message: "Audit log deleted successfully" });
+      res.status(200).json({ message: "Data deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Server error", error });
     }
