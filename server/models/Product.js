@@ -10,8 +10,8 @@ const productSchema = new mongoose.Schema({
 
   
   description: { type: String },
-  category_id: { type: mongoose.Schema.Types.UUID, ref: "Category" },
-  vendor_id: { type: mongoose.Schema.Types.UUID, ref: "User" },
+  category_id: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
+  vendor_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },

@@ -7,6 +7,7 @@ const router = express.Router();
 
 const path = "/users";
 
+router.get(path, UserController.getAllUsers);
 router.post(path + "/register", UserController.registerUser);
 router.post(path + "/login", UserController.authUser);
 router.get(path + "/profile", authMiddleware, UserController.getUserProfile);

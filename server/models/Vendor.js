@@ -1,11 +1,6 @@
 import mongoose from "mongoose";
 
 const vendorSchema = new mongoose.Schema({
-  id: {
-    type: mongoose.Schema.Types.UUID,
-    default: mongoose.Types.UUID,
-    required: true,
-  },
   user_id: { type: mongoose.Schema.Types.UUID, ref: "User" },
   company_name: { type: String, required: true },
   contact_info: { type: String },

@@ -1,7 +1,17 @@
 import User from "../models/User.js";
 import generateToken from "../utils/generateToken.js";
 
+
 export default class UserController {
+  static getAllUsers = async (req, res) => {
+    try{
+      const users = await User.find();
+      res.json(users);
+    }catch(error) {
+      res.status(500).json({ message: "Server Error: " + error.message });
+    }
+    
+  }
   static registerUser = async (req, res) => {
     const { first_name, last_name, email, password_hash, role } = req.body;
 
