@@ -5,7 +5,7 @@ const categorySchema = new mongoose.Schema({
   slug: { type: String, unique: true, required: true },
 
   description: { type: String },
-  
+
   parent_id: { type: mongoose.Schema.Types.UUID, ref: "Category" },
 
   created_at: { type: Date, default: Date.now },

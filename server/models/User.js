@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import AuditLog from "./AuditLog.js";
 
 const userSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
@@ -24,6 +25,7 @@ userSchema.pre("save", async function (next) {
   this.password_hash = await bcrypt.hash(this.password_hash, salt);
   next();
 });
+
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password_hash);

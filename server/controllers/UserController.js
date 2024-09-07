@@ -27,12 +27,24 @@ export default class UserController {
       role,
     });
 
+    // req.log = {
+    //   action: "login",
+    //   table_name: User.modelName.toLowerCase(),
+    //   record_id: user._id,
+    //   changes: user,
+    // };
+
+    // req.user = user;
+
+    // next();
+
     if (user) {
       res.status(201).json({
         _id: user._id,
-        name: user.name,
+        first_name: user.first_name,
+        last_name: user.last_name,
         email: user.email,
-        isAdmin: user.isAdmin,
+        role: user.role,
         token: generateToken(user._id),
       });
     } else {

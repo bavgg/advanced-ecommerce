@@ -7,5 +7,6 @@ router.post("/", AuditLogController.create);
 router.get("/:id", AuditLogController.getById);
 router.put("/:id", AuditLogController.update);
 router.delete("/:id", AuditLogController.delete);
+router.delete("/", AuditLogController.deleteMany);
 
 export default router;

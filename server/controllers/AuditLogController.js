@@ -31,17 +31,9 @@ export default class AuditLogController {
     }
 
     try {
-      const data = new Product(req.body);
+      const data = new AuditLog(req.body);
 
       await data.save();
-
-      req.log = {
-        user_id: req.user._id,
-        action: "create",
-        table_name: Product.modelName.toLowerCase(),
-        record_id: data._id,
-        changes: data,
-      };
 
       res.status(201).json(data);
     } catch (error) {
@@ -51,20 +43,12 @@ export default class AuditLogController {
 
   static update = async (req, res) => {
     try {
-      const data = await Product.findOneAndUpdate(req.params.id, req.body, {
+      const data = await AuditLog.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
       });
       if (!data) {
         return res.status(404).json({ message: "Product not found" });
       }
-
-      req.log = {
-        user_id: req.user._id,
-        action: "update",
-        table_name: AuditLog.modelName.toLowerCase(),
-        record_id: data._id,
-        changes: data,
-      };
 
       res.status(200).json(data);
     } catch (error) {
@@ -74,20 +58,30 @@ export default class AuditLogController {
 
   static delete = async (req, res) => {
     try {
-      const data = await Product.findByIdAndDelete({ slug: req.params.slug });
+      const data = await AuditLog.findByIdAndDelete(req.params.id);
       if (!data) {
         return res
           .status(404)
           .json({ message: "Failed to delete, data not found" });
       }
-      req.log = {
-        user_id: req.user._id,
-        action: "delete",
-        table_name: Product.modelName.toLowerCase(),
-        record_id: data._id,
-        changes: data,
-      };
+
       res.status(200).json({ message: "Data deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Server error " + error.message });
+    }
+  };
+
+  static deleteMany = async (req, res) => {
+    try {
+      const user_id = req.query.user_id;
+      const data = await AuditLog.deleteMany({user_id});
+      if (!data) {
+        return res
+          .status(404)
+          .json({ message: "Failed to delete, data not found" });
+      }
+
+      res.status(200).json({ message: `Data with user_id ${user_id} deleted successfully` });
     } catch (error) {
       res.status(500).json({ message: "Server error " + error.message });
     }
