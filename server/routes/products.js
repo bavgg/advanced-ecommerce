@@ -1,18 +1,16 @@
 import express from "express";
-import Product from "../models/Product.js";
-import GenericController from "../controllers/GenericController.js";
+import ProductController from "../controllers/ProductController.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-const model = Product;
-const controller = new GenericController(model);
-
 const path = "/products";
 
-router.get(path, controller.getAll);
-router.post(path, controller.create);
-router.get(path + "/:id", controller.getById);
-router.put(path + "/:id", controller.update);
-router.delete(path + "/:id", controller.delete);
+router.get(path, ProductController.getAll);
+router.get(path + "/:slug", ProductController.getOne);
+
+router.post(path, authMiddleware, ProductController.create);
+router.put(path + "/:slug", authMiddleware, ProductController.update);
+router.delete(path + "/:slug", authMiddleware, ProductController.delete);
 
 export default router;

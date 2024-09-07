@@ -1,13 +1,11 @@
 import AuditLog from "../models/AuditLog.js";
 
-export default class GenericController {
-  constructor(model) {
-    this.model = model;
-    this.modelName = model.modelName;
-  }
-  getAll = async (req, res) => {
+import Product from "../models/Product.js";
+
+export default class ProductController {
+  static getAll = async (req, res) => {
     try {
-      const data = await this.model.find();
+      const data = await Product.find();
       res.status(200).json(data);
     } catch (error) {
       console.error(error);
@@ -15,9 +13,9 @@ export default class GenericController {
     }
   };
 
-  getById = async (req, res) => {
+  static getOne = async (req, res) => {
     try {
-      const data = await this.model.findById(req.params.id);
+      const data = await Product.findOne({ slug: req.params.slug });
       if (!data) {
         return res.status(404).json({ message: "Data not found" });
       }
@@ -27,7 +25,7 @@ export default class GenericController {
     }
   };
 
-  create = async (req, res) => {
+  static create = async (req, res) => {
     if (!((req.user.role === "admin") | (req.user.role === "vendor"))) {
       return res.status(403).json({
         message: "You do not have permission to modify this resource.",
@@ -42,7 +40,7 @@ export default class GenericController {
       AuditLog.create({
         user_id: req.user._id,
         action: "create",
-        table_name: this.modelName.toLowerCase(),
+        table_name: Product.modelName.toLowerCase(),
         record_id: data._id,
         changes: data,
       });
@@ -53,20 +51,22 @@ export default class GenericController {
     }
   };
 
-  update = async (req, res) => {
+  static update = async (req, res) => {
     try {
-      const data = await this.model.findOneAndUpdate(req.params.id, req.body, {
-        new: true,
-      });
+      const data = await Product.findOneAndUpdate(
+        { slug: req.params.slug },
+        req.body,
+        { new: true }
+      );
       if (!data) {
-        return res.status(404).json({ message: "Data not found" });
+        return res.status(404).json({ message: "Product not found" });
       }
 
       try {
         await AuditLog.create({
           user_id: req.user._id,
           action: "update",
-          table_name: this.modelName.toLowerCase(),
+          table_name: Product.modelName.toLowerCase(),
           record_id: data._id,
           changes: data,
         });
@@ -80,9 +80,9 @@ export default class GenericController {
     }
   };
 
-  delete = async (req, res) => {
+  static delete = async (req, res) => {
     try {
-      const data = await this.model.findByIdAndDelete(req.params.id);
+      const data = await Product.findOneAndDelete({ slug: req.params.slug });
       if (!data) {
         return res
           .status(404)
@@ -91,7 +91,7 @@ export default class GenericController {
       await AuditLog.create({
         user_id: req.user._id,
         action: "delete",
-        table_name: this.modelName.toLowerCase(),
+        table_name: Product.modelName.toLowerCase(),
         record_id: data._id,
         changes: data,
       });
