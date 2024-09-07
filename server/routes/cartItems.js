@@ -7,12 +7,10 @@ const router = express.Router();
 const model = CartItem;
 const controller = new GenericController(model);
 
-const path = "/cart-items";
-
-router.get(path, controller.getAll);
-router.post(path, controller.create);
-router.get(path + "/:id", controller.getById);
-router.put(path + "/:id", controller.update);
-router.delete(path + "/:id", controller.delete);
+router.get("/", controller.getAll);
+router.post("/", controller.create);
+router.get("/:id", controller.getById);
+router.put("/:id", controller.update);
+router.delete("/:id", controller.delete);
 
 export default router;

@@ -2,9 +2,11 @@ import express from "express";
 import cors from "cors";
 import connectDB from "./config/db.js";
 
-import auditLogRoutes from "./routes/auditLogs.js";
-import userRoutes from "./routes/users.js";
-import productRoutes from "./routes/products.js";
+import productRoutes from "./routes/independent/products.js";
+
+import auditLogRoutes from "./routes/independent/auditLogs.js";
+import userRoutes from "./routes/independent/users.js";
+
 import orderRoutes from "./routes/orders.js";
 import categoryRoutes from "./routes/categories.js";
 import productImageRoutes from "./routes/productImages.js";
@@ -31,35 +33,29 @@ app.use(cors());
 
 connectDB();
 
-app.get("/", async (req, res) => {
-  res.send("Hello World");
-});
-
 // Route Definitions
+app.use('/api/audit-logs', auditLogRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
 
-const path = "/api";
-app.use(path, auditLogRoutes);
-app.use(path, userRoutes);
-app.use(path, productRoutes);
-app.use(path, orderRoutes);
-app.use(path, categoryRoutes);
-app.use(path, productImageRoutes);
-app.use(path, paymentRoutes);
-app.use(path, reviewRoutes);
-app.use(path, wishlistRoutes);
-app.use(path, wishlistItemRoutes);
-app.use(path, couponRoutes);
-app.use(path, cartRoutes);
-app.use(path, cartItemRoutes);
-app.use(path, inventoryRoutes);
-app.use(path, shippingRoutes);
-app.use(path, vendorRoutes);
-app.use(path, productAttributeRoutes);
-app.use(path, auditLogRoutes);
-app.use(path, notificationRoutes);
-app.use(path, roleRoutes);
-app.use(path, permissionRoutes);
-app.use(path, rolePermissionRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/product-images', productImageRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/wishlists', wishlistRoutes);
+app.use('/api/wishlist-items', wishlistItemRoutes);
+app.use('/api/coupons', couponRoutes);
+app.use('/api/carts', cartRoutes);
+app.use('/api/cart-items', cartItemRoutes);
+app.use('/api/inventories', inventoryRoutes);
+app.use('/api/shippings', shippingRoutes);
+app.use('/api/vendors', vendorRoutes);
+app.use('/api/product-attributes', productAttributeRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/roles', roleRoutes);
+app.use('/api/permissions', permissionRoutes);
+app.use('/api/role-permissions', rolePermissionRoutes);
 
 app.listen(3000, () => {
   console.log("Server started at port " + 3000);

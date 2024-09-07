@@ -25,7 +25,7 @@ export default class ProductController {
     }
   };
 
-  static create = async (req, res) => {
+  static create = async (req, res, next) => {
     if (!((req.user.role === "admin") | (req.user.role === "vendor"))) {
       return res.status(403).json({
         message: "You do not have permission to modify this resource.",
@@ -33,25 +33,29 @@ export default class ProductController {
     }
 
     try {
-      const data = new this.model(req.body);
+      const data = new Product(req.body);
 
       await data.save();
 
-      AuditLog.create({
+      req.log = {
         user_id: req.user._id,
         action: "create",
         table_name: Product.modelName.toLowerCase(),
         record_id: data._id,
         changes: data,
-      });
+      };
 
-      res.status(201).json(data);
+      req.data = data;
+
+      next();
+
+      // res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ message: "Server error " + error.message });
     }
   };
 
-  static update = async (req, res) => {
+  static update = async (req, res, next) => {
     try {
       const data = await Product.findOneAndUpdate(
         { slug: req.params.slug },
@@ -62,25 +66,22 @@ export default class ProductController {
         return res.status(404).json({ message: "Product not found" });
       }
 
-      try {
-        await AuditLog.create({
-          user_id: req.user._id,
-          action: "update",
-          table_name: Product.modelName.toLowerCase(),
-          record_id: data._id,
-          changes: data,
-        });
-      } catch (error) {
-        res.status(500).json({ message: "Server error " + error.message });
-      }
+      req.log = {
+        user_id: req.user._id,
+        action: "update",
+        table_name: Product.modelName.toLowerCase(),
+        record_id: data._id,
+        changes: data,
+      };
 
-      res.status(200).json(data);
+      req.data = data;
+      next();
     } catch (error) {
       res.status(500).json({ message: "Server error " + error.message });
     }
   };
 
-  static delete = async (req, res) => {
+  static delete = async (req, res, next) => {
     try {
       const data = await Product.findOneAndDelete({ slug: req.params.slug });
       if (!data) {
@@ -88,14 +89,19 @@ export default class ProductController {
           .status(404)
           .json({ message: "Failed to delete, data not found" });
       }
-      await AuditLog.create({
+
+      req.log = {
+        // this requires the auth middleware
         user_id: req.user._id,
+
         action: "delete",
         table_name: Product.modelName.toLowerCase(),
         record_id: data._id,
         changes: data,
-      });
-      res.status(200).json({ message: "Data deleted successfully" });
+      };
+
+      next();
+      
     } catch (error) {
       res.status(500).json({ message: "Server error " + error.message });
     }
